@@ -1,0 +1,14 @@
+target/
+
+.idea/
+*.iml
+
+allure-results/
+allure-report/
+test-output/
+
+*.log
+.env
+
+.DS_Store
+Thumbs.db
