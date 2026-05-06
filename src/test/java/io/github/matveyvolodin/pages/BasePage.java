@@ -1,7 +1,9 @@
 package io.github.matveyvolodin.pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -11,6 +13,7 @@ public abstract class BasePage {
 
     protected WebDriver driver;
     protected WebDriverWait wait;
+    private static boolean surveyDismissed = false;
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
@@ -34,5 +37,16 @@ public abstract class BasePage {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).getText();
     }
 
+    protected void closeGoogleSurveyIfPresent() {
+        if (surveyDismissed) return;
+        try {
+            WebElement close = driver.findElement(By.cssSelector("#dismiss-button"));
+            if (close.isDisplayed()) {
+                close.click();
+                surveyDismissed = true;
+            }
+        } catch (NoSuchElementException ignored) {
+        }
+    }
 
 }

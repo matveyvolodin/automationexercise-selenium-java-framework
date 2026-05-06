@@ -7,6 +7,7 @@ public class AccountDeletedPage extends BasePage{
 
     public AccountDeletedPage(WebDriver driver) {
         super(driver);
+        closeGoogleSurveyIfPresent();
     }
 
     private final By successMessage = By.cssSelector("[data-qa='account-deleted']");
