@@ -15,7 +15,7 @@ public class SignupPageTest extends BaseTest {
     private final User user = UserFactory.getRandomUser();
 
     @Test
-    @Description("Create new User account")
+    @Description("Create new User account, delete it and verify that account was created and deleted successfully")
     public void testCreateDeleteUserAccount() {
         AccountCreatedPage accountCreatedPage = new HeaderMenuComponent(driver)
                 .clickSignupLoginButton()
