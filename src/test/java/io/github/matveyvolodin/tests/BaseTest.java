@@ -20,6 +20,7 @@ public abstract class BaseTest {
     @BeforeMethod
     public void setUp() {
         ChromeOptions options = new ChromeOptions();
+        options.addArguments("--incognito");
 
         if (Boolean.parseBoolean(System.getProperty("headless", "false"))) {
             options.addArguments("--headless");
