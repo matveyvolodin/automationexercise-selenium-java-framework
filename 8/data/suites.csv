@@ -1,0 +1,2 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"Create new User account, delete it and verify that account was created and deleted successfully","13783","testCreateDeleteUserAccount","Surefire suite","Wed May 06 09:42:33 UTC 2026","broken","Wed May 06 09:42:47 UTC 2026","io.github.matveyvolodin.tests.SignupPageTest","Surefire test","io.github.matveyvolodin.tests.SignupPageTest","testCreateDeleteUserAccount"
