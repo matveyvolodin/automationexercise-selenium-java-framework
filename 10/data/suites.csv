@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"Verify that account was deleted successfully","4827","testDeleteUserAccount","Surefire suite","Mon May 11 06:46:16 UTC 2026","passed","Mon May 11 06:46:21 UTC 2026","io.github.matveyvolodin.tests.SignupPageTest","Surefire test","io.github.matveyvolodin.tests.SignupPageTest","testDeleteUserAccount"
+"Verify that user account was created successfully and user was redirected to the main page","7156","testCreateUserAccount","Surefire suite","Mon May 11 06:46:07 UTC 2026","passed","Mon May 11 06:46:14 UTC 2026","io.github.matveyvolodin.tests.SignupPageTest","Surefire test","io.github.matveyvolodin.tests.SignupPageTest","testCreateUserAccount"
