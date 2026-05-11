@@ -7,9 +7,12 @@ import org.openqa.selenium.WebDriver;
 
 public class SignupLoginPage  extends BasePage {
 
-    private final By nameField = By.xpath("//input[@data-qa='signup-name']");
-    private final By emailAddressField = By.xpath("//input[@data-qa='signup-email']");
-    private final By signupButton = By.xpath("//button[@data-qa='signup-button']");
+    private final By nameField = By.cssSelector("[data-qa='signup-name']");
+    private final By emailAddressField = By.cssSelector("[data-qa='signup-email']");
+    private final By signupButton = By.cssSelector("[data-qa='signup-button']");
+    private final By loginEmailAddressField = By.cssSelector("[data-qa='login-email']");
+    private final By loginPasswordField = By.cssSelector("[data-qa='login-password']");
+    private final By loginButton = By.cssSelector("[data-qa='login-button']");
 
     public SignupLoginPage(WebDriver driver) {
         super(driver);
@@ -33,8 +36,21 @@ public class SignupLoginPage  extends BasePage {
         return new SignupPage(driver);
     }
 
+    @Step
+    public SignupLoginPage fillEmailAddressInLoginForm(String emailAddress) {
+        fill(loginEmailAddressField, emailAddress);
+        return this;
+    }
+    @Step
+    public SignupLoginPage fillPasswordInLoginForm(String password) {
+        fill(loginPasswordField, password);
+        return this;
+    }
 
-
-
+    @Step("Click the 'Login' button")
+    public MainPage clickLoginButton() {
+        click(loginButton);
+        return new MainPage(driver);
+    }
 
 }
