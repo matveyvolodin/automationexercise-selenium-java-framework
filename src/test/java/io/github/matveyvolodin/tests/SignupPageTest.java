@@ -15,8 +15,8 @@ public class SignupPageTest extends BaseTest {
     private final User user = UserFactory.getRandomUser();
 
     @Test
-    @Description("Create new User account, delete it and verify that account was created and deleted successfully")
-    public void testCreateDeleteUserAccount() {
+    @Description("Verify that user account was created successfully and user was redirected to the main page")
+    public void testCreateUserAccount() {
         AccountCreatedPage accountCreatedPage = new HeaderMenuComponent(driver)
                 .clickSignupLoginButton()
                 .fillNameInSignupForm(user.getName())
@@ -29,6 +29,19 @@ public class SignupPageTest extends BaseTest {
         Assert.assertEquals(accountCreatedPage.getSuccessMessage(), "ACCOUNT CREATED!");
 
         accountCreatedPage.clickContinueButton();
+
+        Allure.step("Verify that user was redirected to the main page");
+        Assert.assertEquals(driver.getCurrentUrl(), "https://automationexercise.com/");
+    }
+
+    @Test(dependsOnMethods = "testCreateUserAccount")
+    @Description("Verify that account was deleted successfully")
+    public void testDeleteUserAccount() {
+        new HeaderMenuComponent(driver)
+                .clickSignupLoginButton()
+                .fillEmailAddressInLoginForm(user.getEmail())
+                .fillPasswordInLoginForm(user.getPassword())
+                .clickLoginButton();
 
         AccountDeletedPage accountDeletedPage = new HeaderMenuComponent(driver)
                 .clickDeleteAccountButton();
