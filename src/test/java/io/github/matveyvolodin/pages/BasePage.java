@@ -49,4 +49,7 @@ public abstract class BasePage {
         }
     }
 
+    protected String getPlaceholder(By locator) {
+        return driver.findElement(locator).getAttribute("placeholder");
+    }
 }
