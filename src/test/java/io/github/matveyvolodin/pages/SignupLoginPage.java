@@ -4,6 +4,9 @@ import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class SignupLoginPage  extends BasePage {
 
@@ -13,6 +16,7 @@ public class SignupLoginPage  extends BasePage {
     private final By loginEmailAddressField = By.cssSelector("[data-qa='login-email']");
     private final By loginPasswordField = By.cssSelector("[data-qa='login-password']");
     private final By loginButton = By.cssSelector("[data-qa='login-button']");
+    private final By subscribeEmail = By.id("susbscribe_email");
 
     public SignupLoginPage(WebDriver driver) {
         super(driver);
@@ -53,4 +57,16 @@ public class SignupLoginPage  extends BasePage {
         return new MainPage(driver);
     }
 
+    public Map<String, String> getPlaceholders() {
+
+        Map<String, String> map = new HashMap<>();
+
+        map.put("login-email", getPlaceholder(loginEmailAddressField));
+        map.put("login-password", getPlaceholder(loginPasswordField));
+        map.put("signup-name", getPlaceholder(nameField));
+        map.put("signup-email", getPlaceholder(emailAddressField));
+        map.put("susbscribe_email", getPlaceholder(subscribeEmail));
+
+        return map;
+    }
 }
