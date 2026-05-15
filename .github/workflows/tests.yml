@@ -1,14 +1,12 @@
 name: Run Tests
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
 
 permissions:
-  write-all
+  contents: write
 
 jobs:
   test:
@@ -29,7 +27,6 @@ jobs:
 
       - name: Run tests
         run: mvn clean test -Dheadless=true
-        continue-on-error: true
 
       - name: Load test report history
         uses: actions/checkout@v4
