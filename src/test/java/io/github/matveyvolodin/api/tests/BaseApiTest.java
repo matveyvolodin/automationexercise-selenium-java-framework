@@ -9,10 +9,12 @@ public class BaseApiTest {
 
     protected AccountApiClient accountApiClient;
     protected User testUser;
+    protected User secondTestUser;
 
     @BeforeMethod
     public void setUp() {
         accountApiClient = new AccountApiClient();
         testUser = UserFactory.getRandomUser();
+        secondTestUser = UserFactory.getSecondUser();
     }
 }
