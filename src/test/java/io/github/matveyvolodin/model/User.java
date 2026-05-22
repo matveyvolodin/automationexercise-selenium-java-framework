@@ -3,7 +3,7 @@ package io.github.matveyvolodin.model;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder
+@Builder(toBuilder = true)
 @Getter
 public class User {
     private final String title;

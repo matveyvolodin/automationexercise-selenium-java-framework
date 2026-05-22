@@ -29,4 +29,11 @@ public class UserFactory {
                 .mobileNumber("1234567890")
                 .build();
     }
+
+    public static User getSecondUser() {
+        return getRandomUser().toBuilder()
+                .email("second_user_%s@gmail.com".formatted(RUN_ID))
+                .password("Password124!")
+                .build();
+    }
 }

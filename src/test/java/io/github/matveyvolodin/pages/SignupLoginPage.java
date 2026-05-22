@@ -17,6 +17,7 @@ public class SignupLoginPage  extends BasePage {
     private final By loginPasswordField = By.cssSelector("[data-qa='login-password']");
     private final By loginButton = By.cssSelector("[data-qa='login-button']");
     private final By subscribeEmail = By.id("susbscribe_email");
+    private final By loginErrorMessage = By.cssSelector("p[style='color: red;']");
 
     public SignupLoginPage(WebDriver driver) {
         super(driver);
@@ -52,9 +53,9 @@ public class SignupLoginPage  extends BasePage {
     }
 
     @Step("Click the 'Login' button")
-    public MainPage clickLoginButton() {
+    public SignupLoginPage clickLoginButton() {
         click(loginButton);
-        return new MainPage(driver);
+        return this;
     }
 
     public Map<String, String> getPlaceholders() {
@@ -68,5 +69,10 @@ public class SignupLoginPage  extends BasePage {
         map.put("susbscribe_email", getPlaceholder(subscribeEmail));
 
         return map;
+    }
+
+    @Step("Get login error message")
+    public String getLoginErrorMessage() {
+        return driver.findElement(loginErrorMessage).getText();
     }
 }
