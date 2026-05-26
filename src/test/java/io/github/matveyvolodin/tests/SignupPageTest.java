@@ -41,7 +41,7 @@ public class SignupPageTest extends BaseTest {
                 .clickSignupLoginButton()
                 .fillEmailAddressInLoginForm(user.getEmail())
                 .fillPasswordInLoginForm(user.getPassword())
-                .clickLoginButton();
+                .clickLoginButtonExpectedSuccess();
 
         AccountDeletedPage accountDeletedPage = new HeaderMenuComponent(driver)
                 .clickDeleteAccountButton();

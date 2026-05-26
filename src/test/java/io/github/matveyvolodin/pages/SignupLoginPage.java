@@ -53,9 +53,15 @@ public class SignupLoginPage  extends BasePage {
     }
 
     @Step("Click the 'Login' button")
-    public SignupLoginPage clickLoginButton() {
+    public SignupLoginPage clickLoginButtonExpectedFailure() {
         click(loginButton);
         return this;
+    }
+
+    @Step("Click the 'Login' button")
+    public MainPage clickLoginButtonExpectedSuccess() {
+        click(loginButton);
+        return new MainPage(driver);
     }
 
     public Map<String, String> getPlaceholders() {

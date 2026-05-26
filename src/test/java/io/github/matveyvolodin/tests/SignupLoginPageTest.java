@@ -3,6 +3,7 @@ package io.github.matveyvolodin.tests;
 import io.github.matveyvolodin.api.client.AccountApiClient;
 import io.github.matveyvolodin.model.User;
 import io.github.matveyvolodin.model.UserFactory;
+import io.github.matveyvolodin.pages.MainPage;
 import io.github.matveyvolodin.pages.SignupLoginPage;
 import io.github.matveyvolodin.pages.component.HeaderMenuComponent;
 import io.qameta.allure.Allure;
@@ -65,6 +66,24 @@ public class SignupLoginPageTest extends BaseTest {
         Assert.assertEquals(signupLoginPage.getPlaceholders(), expected);
     }
 
+    @Test
+    @Description("Verify that user can login with valid credentials")
+    public void testLoginWithValidCredentials() {
+
+        MainPage mainPage = new HeaderMenuComponent(driver)
+                .clickSignupLoginButton()
+                .fillEmailAddressInLoginForm(existingUser.getEmail())
+                .fillPasswordInLoginForm(existingUser.getPassword())
+                .clickLoginButtonExpectedSuccess();
+
+        Allure.step("Verify that user is logged in and username is displayed", () ->
+                Assert.assertEquals(
+                        mainPage.getLoginMessage(),
+                        "Logged in as %s".formatted(existingUser.getName())
+                )
+        );
+    }
+
     @Test(dataProvider = "invalidCredentials")
     @Description("Verify that user cannot login with invalid credentials")
     public void testLoginWithInvalidCredentials(String description, String email, String password, String expectedMessage) {
@@ -72,7 +91,7 @@ public class SignupLoginPageTest extends BaseTest {
                 .clickSignupLoginButton()
                 .fillEmailAddressInLoginForm(email)
                 .fillPasswordInLoginForm(password)
-                .clickLoginButton();
+                .clickLoginButtonExpectedFailure();
 
         Allure.step("Verify that user cannot login with invalid credentials: " + description, () ->
                 Assert.assertEquals(signupLoginPage.getLoginErrorMessage(), expectedMessage));
