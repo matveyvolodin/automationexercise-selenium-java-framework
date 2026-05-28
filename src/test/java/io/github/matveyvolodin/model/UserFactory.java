@@ -1,16 +1,18 @@
 package io.github.matveyvolodin.model;
 
-public class UserFactory {
+import java.util.UUID;
 
-    private static final String RUN_ID = String.valueOf(System.currentTimeMillis());
+public class UserFactory {
 
     private UserFactory() {}
 
     public static User getRandomUser() {
+        String uniqueId = UUID.randomUUID().toString().substring(0, 8);
+
         return User.builder()
                 .title("Mr")
-                .name("User_%s".formatted(RUN_ID))
-                .email("user_%s@gmail.com".formatted(RUN_ID))
+                .name("User_%s".formatted(uniqueId))
+                .email("user_%s@gmail.com".formatted(uniqueId))
                 .password("Password123!")
                 .dayOfBirth("15")
                 .monthOfBirth("January")
@@ -31,8 +33,9 @@ public class UserFactory {
     }
 
     public static User getSecondUser() {
+        String uniqueId = UUID.randomUUID().toString().substring(0, 8);
         return getRandomUser().toBuilder()
-                .email("second_user_%s@gmail.com".formatted(RUN_ID))
+                .email("second_user_%s@gmail.com".formatted(uniqueId))
                 .password("Password124!")
                 .build();
     }
