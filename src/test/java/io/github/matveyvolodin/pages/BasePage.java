@@ -1,9 +1,6 @@
 package io.github.matveyvolodin.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -19,6 +16,7 @@ public abstract class BasePage {
         this.driver = driver;
         // Default wait of 10 seconds
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        handleConsentPopup();
     }
 
     protected void click(By locator) {
@@ -46,6 +44,17 @@ public abstract class BasePage {
                 surveyDismissed = true;
             }
         } catch (NoSuchElementException ignored) {
+        }
+    }
+
+    private void handleConsentPopup() {
+        try {
+            WebElement consentBtn = new WebDriverWait(driver, Duration.ofSeconds(5))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.xpath("//p[text()='Consent']")
+                    ));
+            consentBtn.click();
+        } catch (TimeoutException ignored) {
         }
     }
 
