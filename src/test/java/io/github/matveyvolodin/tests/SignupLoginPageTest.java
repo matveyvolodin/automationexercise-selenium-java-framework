@@ -21,6 +21,8 @@ public class SignupLoginPageTest extends BaseTest {
     private User existingUser;
     private User secondUser;
     private final AccountApiClient accountApiClient = new AccountApiClient();
+    private static final String INVALID_CREDENTIALS_MESSAGE =
+            "Your email or password is incorrect!";
 
     @BeforeClass
     public void createExistingUser() {
@@ -95,5 +97,22 @@ public class SignupLoginPageTest extends BaseTest {
 
         Allure.step("Verify that user cannot login with invalid credentials: " + description, () ->
                 Assert.assertEquals(signupLoginPage.getLoginErrorMessage(), expectedMessage));
+    }
+
+    @Test
+    @Description("Verify that the user cannot log in with a deleted account")
+    public void testLoginWithDeletedAccount() {
+        User userWithDeletedAccount = UserFactory.getRandomUser();
+        accountApiClient.createAccount(userWithDeletedAccount);
+        accountApiClient.deleteAccount(userWithDeletedAccount);
+
+        SignupLoginPage signupLoginPage = new HeaderMenuComponent(driver)
+                .clickSignupLoginButton()
+                .fillEmailAddressInLoginForm(userWithDeletedAccount.getEmail())
+                .fillPasswordInLoginForm(userWithDeletedAccount.getPassword())
+                .clickLoginButtonExpectedFailure();
+
+        Allure.step("Verify login error message is displayed", () ->
+        Assert.assertEquals(signupLoginPage.getLoginErrorMessage(), INVALID_CREDENTIALS_MESSAGE));
     }
 }
