@@ -20,6 +20,7 @@ public class SignupLoginPageTest extends BaseTest {
     private final AccountApiClient accountApiClient = new AccountApiClient();
     private static final String INVALID_CREDENTIALS_MESSAGE =
             "Your email or password is incorrect!";
+    private static final String EMAIL_ALREADY_EXIST = "Email Address already exist!";
 
     @BeforeClass
     public void createExistingUser() {
@@ -93,7 +94,7 @@ public class SignupLoginPageTest extends BaseTest {
                 .clickLoginButtonExpectedFailure();
 
         Allure.step("Verify that user cannot login with invalid credentials: " + description, () ->
-                Assert.assertEquals(signupLoginPage.getLoginErrorMessage(), expectedMessage));
+                Assert.assertEquals(signupLoginPage.getErrorMessage(), expectedMessage));
     }
 
     @Test
@@ -110,6 +111,19 @@ public class SignupLoginPageTest extends BaseTest {
                 .clickLoginButtonExpectedFailure();
 
         Allure.step("Verify login error message is displayed", () ->
-        Assert.assertEquals(signupLoginPage.getLoginErrorMessage(), INVALID_CREDENTIALS_MESSAGE));
+        Assert.assertEquals(signupLoginPage.getErrorMessage(), INVALID_CREDENTIALS_MESSAGE));
+    }
+
+    @Test
+    @Description("Verify that the user cannot register with already registered email")
+    public void testRegisterWithAlreadyRegisteredEmail() {
+        SignupLoginPage signupLoginPage = new HeaderMenuComponent(driver)
+                .clickSignupLoginButton()
+                .fillEmailAddressInSignupForm(existingUser.getEmail())
+                .fillNameInSignupForm(existingUser.getName())
+                .clickSignupButtonExpectedFailure();
+
+        Allure.step("Verify signup error message is displayed");
+        Assert.assertEquals(signupLoginPage.getErrorMessage(), EMAIL_ALREADY_EXIST);
     }
 }

@@ -17,7 +17,7 @@ public class SignupLoginPage  extends BasePage {
     private final By loginPasswordField = By.cssSelector("[data-qa='login-password']");
     private final By loginButton = By.cssSelector("[data-qa='login-button']");
     private final By subscribeEmail = By.id("susbscribe_email");
-    private final By loginErrorMessage = By.cssSelector("p[style='color: red;']");
+    private final By errorMessage = By.cssSelector("p[style='color: red;']");
 
     public SignupLoginPage(WebDriver driver) {
         super(driver);
@@ -39,6 +39,12 @@ public class SignupLoginPage  extends BasePage {
     public SignupPage clickSignupButton() {
         click(signupButton);
         return new SignupPage(driver);
+    }
+
+    @Step("Click the 'Signup' button")
+    public SignupLoginPage clickSignupButtonExpectedFailure() {
+        click(signupButton);
+        return new SignupLoginPage(driver);
     }
 
     @Step
@@ -78,7 +84,7 @@ public class SignupLoginPage  extends BasePage {
     }
 
     @Step("Get login error message")
-    public String getLoginErrorMessage() {
-        return driver.findElement(loginErrorMessage).getText();
+    public String getErrorMessage() {
+        return driver.findElement(errorMessage).getText();
     }
 }
