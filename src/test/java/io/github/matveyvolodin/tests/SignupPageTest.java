@@ -4,7 +4,7 @@ import io.github.matveyvolodin.model.User;
 import io.github.matveyvolodin.model.UserFactory;
 import io.github.matveyvolodin.pages.AccountCreatedPage;
 import io.github.matveyvolodin.pages.AccountDeletedPage;
-import io.github.matveyvolodin.pages.component.HeaderMenuComponent;
+import io.github.matveyvolodin.pages.components.HeaderMenuComponent;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import org.testng.Assert;
@@ -18,7 +18,7 @@ public class SignupPageTest extends BaseTest {
     @Description("Verify that user account was created successfully and user was redirected to the main page")
     public void testCreateUserAccount() {
         AccountCreatedPage accountCreatedPage = new HeaderMenuComponent(driver)
-                .clickSignupLoginButton()
+                .clickSignupLoginTab()
                 .fillNameInSignupForm(user.getName())
                 .fillEmailAddressInSignupForm(user.getEmail())
                 .clickSignupButton()
@@ -38,13 +38,13 @@ public class SignupPageTest extends BaseTest {
     @Description("Verify that account was deleted successfully")
     public void testDeleteUserAccount() {
         new HeaderMenuComponent(driver)
-                .clickSignupLoginButton()
+                .clickSignupLoginTab()
                 .fillEmailAddressInLoginForm(user.getEmail())
                 .fillPasswordInLoginForm(user.getPassword())
                 .clickLoginButtonExpectedSuccess();
 
         AccountDeletedPage accountDeletedPage = new HeaderMenuComponent(driver)
-                .clickDeleteAccountButton();
+                .clickDeleteAccountTab();
 
         Allure.step("Verify that account was deleted successfully");
         Assert.assertEquals(accountDeletedPage.getSuccessMessage(), "ACCOUNT DELETED!");

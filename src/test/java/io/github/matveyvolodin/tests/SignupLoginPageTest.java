@@ -5,7 +5,7 @@ import io.github.matveyvolodin.model.User;
 import io.github.matveyvolodin.model.UserFactory;
 import io.github.matveyvolodin.pages.MainPage;
 import io.github.matveyvolodin.pages.SignupLoginPage;
-import io.github.matveyvolodin.pages.component.HeaderMenuComponent;
+import io.github.matveyvolodin.pages.components.HeaderMenuComponent;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import org.testng.Assert;
@@ -52,7 +52,7 @@ public class SignupLoginPageTest extends BaseTest {
     @Description("Verify that placeholders are presented on the Signup/Login and Signup pages")
     public void testPlaceholders() {
         SignupLoginPage signupLoginPage = new HeaderMenuComponent(driver)
-                .clickSignupLoginButton();
+                .clickSignupLoginTab();
 
         Map<String, String> expected = Map.of(
                 "login-email", "Email Address",
@@ -71,7 +71,7 @@ public class SignupLoginPageTest extends BaseTest {
     public void testLoginWithValidCredentials() {
 
         MainPage mainPage = new HeaderMenuComponent(driver)
-                .clickSignupLoginButton()
+                .clickSignupLoginTab()
                 .fillEmailAddressInLoginForm(existingUser.getEmail())
                 .fillPasswordInLoginForm(existingUser.getPassword())
                 .clickLoginButtonExpectedSuccess();
@@ -88,7 +88,7 @@ public class SignupLoginPageTest extends BaseTest {
     @Description("Verify that user cannot login with invalid credentials")
     public void testLoginWithInvalidCredentials(String description, String email, String password, String expectedMessage) {
         SignupLoginPage signupLoginPage = new HeaderMenuComponent(driver)
-                .clickSignupLoginButton()
+                .clickSignupLoginTab()
                 .fillEmailAddressInLoginForm(email)
                 .fillPasswordInLoginForm(password)
                 .clickLoginButtonExpectedFailure();
@@ -105,7 +105,7 @@ public class SignupLoginPageTest extends BaseTest {
         accountApiClient.deleteAccount(userWithDeletedAccount);
 
         SignupLoginPage signupLoginPage = new HeaderMenuComponent(driver)
-                .clickSignupLoginButton()
+                .clickSignupLoginTab()
                 .fillEmailAddressInLoginForm(userWithDeletedAccount.getEmail())
                 .fillPasswordInLoginForm(userWithDeletedAccount.getPassword())
                 .clickLoginButtonExpectedFailure();
@@ -118,7 +118,7 @@ public class SignupLoginPageTest extends BaseTest {
     @Description("Verify that the user cannot register with already registered email")
     public void testRegisterWithAlreadyRegisteredEmail() {
         SignupLoginPage signupLoginPage = new HeaderMenuComponent(driver)
-                .clickSignupLoginButton()
+                .clickSignupLoginTab()
                 .fillEmailAddressInSignupForm(existingUser.getEmail())
                 .fillNameInSignupForm(existingUser.getName())
                 .clickSignupButtonExpectedFailure();
