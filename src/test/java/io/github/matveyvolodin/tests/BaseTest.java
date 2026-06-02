@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 public abstract class BaseTest {
 
     protected WebDriver driver;
+    protected String baseUrl = "https://automationexercise.com";
 
     @BeforeMethod
     public void setUp() {
@@ -30,7 +31,7 @@ public abstract class BaseTest {
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
-        driver.get("https://automationexercise.com");
+        driver.get(baseUrl);
     }
 
     @AfterMethod
