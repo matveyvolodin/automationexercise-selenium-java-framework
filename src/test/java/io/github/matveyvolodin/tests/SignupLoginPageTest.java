@@ -78,7 +78,7 @@ public class SignupLoginPageTest extends BaseTest {
 
         Allure.step("Verify that user is logged in and username is displayed", () ->
                 Assert.assertEquals(
-                        mainPage.getLoginMessage(),
+                        mainPage.header().getLoginMessage(),
                         "Logged in as %s".formatted(existingUser.getName())
                 )
         );
