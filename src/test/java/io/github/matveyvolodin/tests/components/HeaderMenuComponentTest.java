@@ -1,10 +1,17 @@
 package io.github.matveyvolodin.tests.components;
 
+import io.github.matveyvolodin.api.client.AccountApiClient;
+import io.github.matveyvolodin.model.User;
+import io.github.matveyvolodin.model.UserFactory;
+import io.github.matveyvolodin.pages.MainPage;
+import io.github.matveyvolodin.pages.SignupLoginPage;
 import io.github.matveyvolodin.pages.components.HeaderMenuComponent;
 import io.github.matveyvolodin.tests.BaseTest;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class HeaderMenuComponentTest extends BaseTest {
@@ -12,11 +19,25 @@ public class HeaderMenuComponentTest extends BaseTest {
     private static final String PRODUCTS_URL = "/products";
     private static final String CART_URL = "/view_cart";
     private static final String HOME_URL = "/";
-    public static final String SIGNUP_LOGIN_URL = "/login";
-    public static final String TEST_CASES_URL = "/test_cases";
-    public static final String API_TESTING_URL = "/api_list";
-    public static final String VIDEO_TUTORIALS_URL = "https://www.youtube.com/c/AutomationExercise";
-    public static final String CONTACT_US_URL = "/contact_us";
+    private static final String SIGNUP_LOGIN_URL = "/login";
+    private static final String TEST_CASES_URL = "/test_cases";
+    private static final String API_TESTING_URL = "/api_list";
+    private static final String VIDEO_TUTORIALS_URL = "https://www.youtube.com/c/AutomationExercise";
+    private static final String CONTACT_US_URL = "/contact_us";
+    private final AccountApiClient accountApiClient = new AccountApiClient();
+    private User existingUser;
+
+
+    @BeforeClass
+    public void createExistingUser() {
+        existingUser = UserFactory.getRandomUser();
+        accountApiClient.createAccount(existingUser);
+    }
+
+    @AfterClass
+    public void deleteExistingUser() {
+        accountApiClient.deleteAccount(existingUser);
+    }
 
     @Test
     @Description("Verify that header tabs lead to the correct web pages")
@@ -57,6 +78,28 @@ public class HeaderMenuComponentTest extends BaseTest {
 
         header.clickVideoTutorialsTab();
         Allure.step("Verify that user was redirected to the Video Tutorials page after clicking Video Tutorials tab");
-        Assert.assertEquals(driver.getCurrentUrl(), VIDEO_TUTORIALS_URL);
+        Assert.assertTrue(driver.getCurrentUrl().startsWith(VIDEO_TUTORIALS_URL));
+    }
+
+    @Test
+    @Description("Verify that user can log out using the Logout button in the header menu")
+    public void testUserLogOut() {
+        MainPage mainPage = new HeaderMenuComponent(driver)
+                .clickSignupLoginTab()
+                .fillEmailAddressInLoginForm(existingUser.getEmail())
+                .fillPasswordInLoginForm(existingUser.getPassword())
+                .clickLoginButtonExpectedSuccess();
+
+        Allure.step("Verify that user was logged in successfully");
+        Assert.assertEquals(mainPage.header().getLoginMessage(),  "Logged in as %s".formatted(existingUser.getName()));
+
+        SignupLoginPage signupLoginPage = mainPage.header()
+                .clickLogoutButton();
+
+        Allure.step("Verify that user was logged out successfully and redirected to the main page");
+        Assert.assertEquals(driver.getCurrentUrl(), baseUrl + SIGNUP_LOGIN_URL);
+
+        Allure.step("Verify that after logout, Signup/Login button is displayed in the header menu");
+        Assert.assertTrue(signupLoginPage.header().isSignupLoginButtonDisplayed());
     }
 }

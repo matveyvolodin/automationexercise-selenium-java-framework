@@ -1,5 +1,6 @@
 package io.github.matveyvolodin.pages;
 
+import io.github.matveyvolodin.pages.components.HeaderMenuComponent;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -60,5 +61,13 @@ public abstract class BasePage {
 
     protected String getPlaceholder(By locator) {
         return driver.findElement(locator).getAttribute("placeholder");
+    }
+
+    protected boolean isElementDisplayed(By locator) {
+        return driver.findElement(locator).isDisplayed();
+    }
+
+    public HeaderMenuComponent header() {
+        return new HeaderMenuComponent(driver);
     }
 }
