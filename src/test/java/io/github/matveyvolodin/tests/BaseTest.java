@@ -22,6 +22,7 @@ public abstract class BaseTest {
     public void setUp() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--incognito");
+        options.addArguments("--host-rules=MAP pagead2.googlesyndication.com 127.0.0.1");
 
         if (Boolean.parseBoolean(System.getProperty("headless", "false"))) {
             options.addArguments("--headless");
