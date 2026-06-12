@@ -19,6 +19,7 @@ public abstract class BasePage {
         // Default wait of 10 seconds
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         handleConsentPopup();
+        handleAdPopupIfPresent();
     }
 
     protected void click(By locator) {
@@ -51,11 +52,22 @@ public abstract class BasePage {
 
     private void handleConsentPopup() {
         try {
-            WebElement consentBtn = new WebDriverWait(driver, Duration.ofSeconds(5))
+            WebElement consentBtn = new WebDriverWait(driver, Duration.ofSeconds(3))
                     .until(ExpectedConditions.elementToBeClickable(
                             By.xpath("//p[text()='Consent']")
                     ));
             consentBtn.click();
+        } catch (TimeoutException ignored) {
+        }
+    }
+
+    private void handleAdPopupIfPresent() {
+        try {
+            WebElement close = new WebDriverWait(driver, Duration.ofSeconds(3))
+                    .until(ExpectedConditions.elementToBeClickable(
+                            By.cssSelector("#dismiss-button")
+                    ));
+            close.click();
         } catch (TimeoutException ignored) {
         }
     }
