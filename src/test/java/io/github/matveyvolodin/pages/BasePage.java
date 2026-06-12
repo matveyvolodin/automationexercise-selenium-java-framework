@@ -1,5 +1,6 @@
 package io.github.matveyvolodin.pages;
 
+import io.github.matveyvolodin.pages.components.FooterComponent;
 import io.github.matveyvolodin.pages.components.HeaderMenuComponent;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -50,7 +51,7 @@ public abstract class BasePage {
 
     private void handleConsentPopup() {
         try {
-            WebElement consentBtn = new WebDriverWait(driver, Duration.ofSeconds(5))
+            WebElement consentBtn = new WebDriverWait(driver, Duration.ofSeconds(3))
                     .until(ExpectedConditions.elementToBeClickable(
                             By.xpath("//p[text()='Consent']")
                     ));
@@ -69,5 +70,9 @@ public abstract class BasePage {
 
     public HeaderMenuComponent header() {
         return new HeaderMenuComponent(driver);
+    }
+
+    public FooterComponent footer() {
+        return new FooterComponent(driver);
     }
 }

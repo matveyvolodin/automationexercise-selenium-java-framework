@@ -3,7 +3,6 @@ package io.github.matveyvolodin.tests;
 import io.github.matveyvolodin.model.User;
 import io.github.matveyvolodin.model.UserFactory;
 import io.github.matveyvolodin.pages.AccountCreatedPage;
-import io.github.matveyvolodin.pages.AccountDeletedPage;
 import io.github.matveyvolodin.pages.components.HeaderMenuComponent;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Description;
@@ -32,22 +31,6 @@ public class SignupPageTest extends BaseTest {
 
         Allure.step("Verify that user was redirected to the main page");
         Assert.assertEquals(driver.getCurrentUrl(), "https://automationexercise.com/");
-    }
-
-    @Test(dependsOnMethods = "testCreateUserAccount")
-    @Description("Verify that account was deleted successfully")
-    public void testDeleteUserAccount() {
-        new HeaderMenuComponent(driver)
-                .clickSignupLoginTab()
-                .fillEmailAddressInLoginForm(user.getEmail())
-                .fillPasswordInLoginForm(user.getPassword())
-                .clickLoginButtonExpectedSuccess();
-
-        AccountDeletedPage accountDeletedPage = new HeaderMenuComponent(driver)
-                .clickDeleteAccountTab();
-
-        Allure.step("Verify that account was deleted successfully");
-        Assert.assertEquals(accountDeletedPage.getSuccessMessage(), "ACCOUNT DELETED!");
     }
 }
 

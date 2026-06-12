@@ -3,6 +3,7 @@ package io.github.matveyvolodin.tests.components;
 import io.github.matveyvolodin.api.client.AccountApiClient;
 import io.github.matveyvolodin.model.User;
 import io.github.matveyvolodin.model.UserFactory;
+import io.github.matveyvolodin.pages.AccountDeletedPage;
 import io.github.matveyvolodin.pages.MainPage;
 import io.github.matveyvolodin.pages.SignupLoginPage;
 import io.github.matveyvolodin.pages.components.HeaderMenuComponent;
@@ -26,17 +27,21 @@ public class HeaderMenuComponentTest extends BaseTest {
     private static final String CONTACT_US_URL = "/contact_us";
     private final AccountApiClient accountApiClient = new AccountApiClient();
     private User existingUser;
+    private User deletedUser;
 
 
     @BeforeClass
     public void createExistingUser() {
         existingUser = UserFactory.getRandomUser();
+        deletedUser = UserFactory.getRandomUser();
         accountApiClient.createAccount(existingUser);
+        accountApiClient.createAccount(deletedUser);
     }
 
     @AfterClass
     public void deleteExistingUser() {
         accountApiClient.deleteAccount(existingUser);
+        accountApiClient.deleteAccount(deletedUser);
     }
 
     @Test
@@ -45,40 +50,40 @@ public class HeaderMenuComponentTest extends BaseTest {
         HeaderMenuComponent header = new HeaderMenuComponent(driver);
 
         header.clickProductsTab();
-        Allure.step("Verify that user was redirected to the Products page after clicking Products tab");
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl + PRODUCTS_URL);
+        Allure.step("Verify that user was redirected to the Products page after clicking Products tab", () ->
+            Assert.assertEquals(driver.getCurrentUrl(), baseUrl + PRODUCTS_URL));
 
         header.clickLogo();
-        Allure.step("Verify that user was redirected to the main page after clicking the logo");
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl + HOME_URL);
+        Allure.step("Verify that user was redirected to the main page after clicking the logo", () ->
+            Assert.assertEquals(driver.getCurrentUrl(), baseUrl + HOME_URL));
 
         header.clickCartTab();
-        Allure.step("Verify that user was redirected to the Cart page after clicking Cart tab");
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl + CART_URL);
+        Allure.step("Verify that user was redirected to the Cart page after clicking Cart tab", () ->
+            Assert.assertEquals(driver.getCurrentUrl(), baseUrl + CART_URL));
 
         header.clickHomeTab();
-        Allure.step("Verify that user was redirected to the main page after clicking Home tab");
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl + HOME_URL);
+        Allure.step("Verify that user was redirected to the main page after clicking Home tab", () ->
+            Assert.assertEquals(driver.getCurrentUrl(), baseUrl + HOME_URL));
 
         header.clickSignupLoginTab();
-        Allure.step("Verify that user was redirected to the Signup/Login page after clicking Signup/Login tab");
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl + SIGNUP_LOGIN_URL);
+        Allure.step("Verify that user was redirected to the Signup/Login page after clicking Signup/Login tab", () ->
+            Assert.assertEquals(driver.getCurrentUrl(), baseUrl + SIGNUP_LOGIN_URL));
 
         header.clickTestCasesTab();
-        Allure.step("Verify that user was redirected to the Test Cases page after clicking Test Cases tab");
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl + TEST_CASES_URL);
+        Allure.step("Verify that user was redirected to the Test Cases page after clicking Test Cases tab", () ->
+            Assert.assertEquals(driver.getCurrentUrl(), baseUrl + TEST_CASES_URL));
 
         header.clickApiTestingTab();
-        Allure.step("Verify that user was redirected to the API Testing page after clicking API Testing tab");
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl + API_TESTING_URL);
+        Allure.step("Verify that user was redirected to the API Testing page after clicking API Testing tab", () ->
+            Assert.assertEquals(driver.getCurrentUrl(), baseUrl + API_TESTING_URL));
 
         header.clickContactUsTab();
-        Allure.step("Verify that user was redirected to the Contact Us page after clicking Contact Us tab");
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl + CONTACT_US_URL);
+        Allure.step("Verify that user was redirected to the Contact Us page after clicking Contact Us tab", () ->
+            Assert.assertEquals(driver.getCurrentUrl(), baseUrl + CONTACT_US_URL));
 
         header.clickVideoTutorialsTab();
-        Allure.step("Verify that user was redirected to the Video Tutorials page after clicking Video Tutorials tab");
-        Assert.assertTrue(driver.getCurrentUrl().startsWith(VIDEO_TUTORIALS_URL));
+        Allure.step("Verify that user was redirected to the Video Tutorials page after clicking Video Tutorials tab" , () ->
+            Assert.assertTrue(driver.getCurrentUrl().startsWith(VIDEO_TUTORIALS_URL)));
     }
 
     @Test
@@ -96,10 +101,25 @@ public class HeaderMenuComponentTest extends BaseTest {
         SignupLoginPage signupLoginPage = mainPage.header()
                 .clickLogoutButton();
 
-        Allure.step("Verify that user was logged out successfully and redirected to the main page");
-        Assert.assertEquals(driver.getCurrentUrl(), baseUrl + SIGNUP_LOGIN_URL);
+        Allure.step("Verify that user was logged out successfully and redirected to the main page", () ->
+            Assert.assertEquals(driver.getCurrentUrl(), baseUrl + SIGNUP_LOGIN_URL));
 
-        Allure.step("Verify that after logout, Signup/Login button is displayed in the header menu");
-        Assert.assertTrue(signupLoginPage.header().isSignupLoginButtonDisplayed());
+        Allure.step("Verify that after logout, Signup/Login button is displayed in the header menu" , () ->
+            Assert.assertTrue(signupLoginPage.header().isSignupLoginButtonDisplayed()));
+    }
+
+    @Test
+    @Description("Verify that account was deleted successfully")
+    public void testDeleteUserAccount() {
+        AccountDeletedPage accountDeletedPage = new HeaderMenuComponent(driver)
+                .clickSignupLoginTab()
+                .fillEmailAddressInLoginForm(deletedUser.getEmail())
+                .fillPasswordInLoginForm(deletedUser.getPassword())
+                .clickLoginButtonExpectedSuccess()
+                .header()
+                .clickDeleteAccountTab();
+
+        Allure.step("Verify that account was deleted successfully" , () ->
+            Assert.assertEquals(accountDeletedPage.getSuccessMessage(), "ACCOUNT DELETED!"));
     }
 }
