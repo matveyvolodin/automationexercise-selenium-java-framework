@@ -69,6 +69,7 @@ public abstract class BasePage {
                     ));
             close.click();
         } catch (TimeoutException ignored) {
+            System.out.println(driver.getPageSource().substring(0, 2000));
         }
     }
 
