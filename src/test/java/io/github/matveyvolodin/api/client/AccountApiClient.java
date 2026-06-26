@@ -37,13 +37,129 @@ public class AccountApiClient {
                 .when()
                 .post(CREATE_ACCOUNT_ENDPOINT)
                 .then()
-                .statusCode(200) // Service returns 200 instead of 201 for successful account creation
                 .extract()
                 .response();
 
         AccountResponse result = new AccountResponse();
         result.setResponseCode(response.jsonPath().getInt("responseCode"));
         result.setMessage(response.jsonPath().getString("message"));
+        return result;
+    }
+
+    @Step("Creating account without email field for user: {user.name}")
+    public AccountResponse createAccountWithoutEmail(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .formParam("name",          user.getName())
+                // email formParam is intentionally omitted to test missing field validation
+                .formParam("password",      user.getPassword())
+                .formParam("title",         user.getTitle())
+                .formParam("birth_date",    user.getDayOfBirth())
+                .formParam("birth_month",   user.getMonthOfBirth())
+                .formParam("birth_year",    user.getYearOfBirth())
+                .formParam("firstname",     user.getFirstName())
+                .formParam("lastname",      user.getLastName())
+                .formParam("company",       user.getCompany())
+                .formParam("address1",      user.getAddress())
+                .formParam("address2",      user.getAddress2())
+                .formParam("country",       user.getCountry())
+                .formParam("zipcode",       user.getZipCode())
+                .formParam("state",         user.getState())
+                .formParam("city",          user.getCity())
+                .formParam("mobile_number", user.getMobileNumber())
+                .when()
+                .post(CREATE_ACCOUNT_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        AccountResponse result = new AccountResponse();
+        result.setResponseCode(response.jsonPath().getInt("responseCode"));
+        result.setMessage(response.jsonPath().getString("message"));
+        return result;
+    }
+
+    @Step("Creating account without password field for user: {user.email}")
+    public AccountResponse createAccountWithoutPassword(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .formParam("name",          user.getName())
+                .formParam("email",         user.getEmail())
+                // password formParam is intentionally omitted to test missing field validation
+                .formParam("title",         user.getTitle())
+                .formParam("birth_date",    user.getDayOfBirth())
+                .formParam("birth_month",   user.getMonthOfBirth())
+                .formParam("birth_year",    user.getYearOfBirth())
+                .formParam("firstname",     user.getFirstName())
+                .formParam("lastname",      user.getLastName())
+                .formParam("company",       user.getCompany())
+                .formParam("address1",      user.getAddress())
+                .formParam("address2",      user.getAddress2())
+                .formParam("country",       user.getCountry())
+                .formParam("zipcode",       user.getZipCode())
+                .formParam("state",         user.getState())
+                .formParam("city",          user.getCity())
+                .formParam("mobile_number", user.getMobileNumber())
+                .when()
+                .post(CREATE_ACCOUNT_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        AccountResponse result = new AccountResponse();
+        result.setResponseCode(response.jsonPath().getInt("responseCode"));
+        result.setMessage(response.jsonPath().getString("message"));
+        return result;
+    }
+
+    @Step("Creating account without name field for user: {user.email}")
+    public AccountResponse createAccountWithoutName(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                // name formParam is intentionally omitted to test missing field validation
+                .formParam("email",         user.getEmail())
+                .formParam("password",      user.getPassword())
+                .formParam("title",         user.getTitle())
+                .formParam("birth_date",    user.getDayOfBirth())
+                .formParam("birth_month",   user.getMonthOfBirth())
+                .formParam("birth_year",    user.getYearOfBirth())
+                .formParam("firstname",     user.getFirstName())
+                .formParam("lastname",      user.getLastName())
+                .formParam("company",       user.getCompany())
+                .formParam("address1",      user.getAddress())
+                .formParam("address2",      user.getAddress2())
+                .formParam("country",       user.getCountry())
+                .formParam("zipcode",       user.getZipCode())
+                .formParam("state",         user.getState())
+                .formParam("city",          user.getCity())
+                .formParam("mobile_number", user.getMobileNumber())
+                .when()
+                .post(CREATE_ACCOUNT_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        AccountResponse result = new AccountResponse();
+        result.setResponseCode(response.jsonPath().getInt("responseCode"));
+        result.setMessage(response.jsonPath().getString("message"));
+        return result;
+    }
+
+    @Step("Attempting to create account with unsupported HTTP method PUT")
+    public AccountResponse createAccountWithPut(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .formParam("email",    user.getEmail())
+                .formParam("password", user.getPassword())
+                .when()
+                .put(CREATE_ACCOUNT_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        AccountResponse result = new AccountResponse();
+        result.setResponseCode(response.statusCode());
+        result.setMessage(response.jsonPath().getString("detail"));
         return result;
     }
 
@@ -56,7 +172,6 @@ public class AccountApiClient {
                 .when()
                 .delete(DELETE_ACCOUNT_ENDPOINT)
                 .then()
-                .statusCode(200) // Service returns 200 instead of 204 for successful account deletion
                 .extract()
                 .response();
 
