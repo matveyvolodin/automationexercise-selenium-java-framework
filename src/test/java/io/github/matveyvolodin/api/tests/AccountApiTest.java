@@ -16,17 +16,21 @@ public class AccountApiTest extends BaseApiTest{
     public void setUp() {
         super.setUp();
         accountApiClient.createAccount(AccountApiTestData.DELETE_TEST_USER);
+        accountApiClient.createAccount(AccountApiTestData.UPDATE_TEST_USER);
     }
 
     @AfterClass
     public void tearDown() {
         safeDeleteAccount(AccountApiTestData.TEST_USER);
         safeDeleteAccount(AccountApiTestData.DELETE_TEST_USER);
+        safeDeleteAccount(AccountApiTestData.UPDATE_TEST_USER);
     }
 
     @Test(dataProvider = "registerUserData", dataProviderClass = AccountApiTestData.class)
     @Description("Verify POST /createAccount endpoint responses for different input scenarios")
-    public void testCreateAccount(User user, String method, int expectedCode, String expectedMessage) {
+    public void testCreateAccount(String scenarioName, User user, String method, int expectedCode, String expectedMessage) {
+        Allure.getLifecycle().updateTestCase(testResult -> testResult.setName(scenarioName));
+
         AccountResponse response = switch (method) {
             case "createAccountWithoutEmail" -> accountApiClient.createAccountWithoutEmail(user);
             case "createAccountWithoutPassword" -> accountApiClient.createAccountWithoutPassword(user);
@@ -59,11 +63,12 @@ public class AccountApiTest extends BaseApiTest{
 
     @Test(dataProvider = "deleteUserData", dataProviderClass = AccountApiTestData.class)
     @Description("Verify DELETE /deleteAccount endpoint responses for different input scenarios")
-    public void testDeleteAccount(User user, String method, int expectedCode, String expectedMessage) {
+    public void testDeleteAccount(String scenarioName, User user, String method, int expectedCode, String expectedMessage) {
+        Allure.getLifecycle().updateTestCase(testResult -> testResult.setName(scenarioName));
+
         AccountResponse response = switch (method) {
             case "deleteAccountWithoutEmail" -> accountApiClient.deleteAccountWithoutEmail(user);
             case "deleteAccountWithoutPassword" -> accountApiClient.deleteAccountWithoutPassword(user);
-            case "deleteAccountWrongPassword" -> accountApiClient.deleteAccountWrongPassword(user);
             default -> accountApiClient.deleteAccount(user);
         };
 
@@ -83,6 +88,40 @@ public class AccountApiTest extends BaseApiTest{
         Allure.step("Verify the response code '405'", () ->
                 Assert.assertEquals(response.getResponseCode(), 405)
         );
+        Allure.step("Verify the response message", () ->
+                Assert.assertEquals(response.getMessage(), "Method \"POST\" not allowed.")
+        );
+    }
+
+    @Test(dataProvider = "updateUserData", dataProviderClass = AccountApiTestData.class)
+    @Description("Verify PUT /updateAccount endpoint responses for different input scenarios")
+    public void testUpdateAccount(String scenarioName, User user, String method, int expectedCode,
+                                  String expectedMessage) {
+        Allure.getLifecycle().updateTestCase(testResult -> testResult.setName(scenarioName));
+
+        AccountResponse response = switch (method) {
+            case "updateAccountWithoutEmail" -> accountApiClient.updateAccountWithoutEmail(user);
+            case "updateAccountWithoutPassword" -> accountApiClient.updateAccountWithoutPassword(user);
+            default -> accountApiClient.updateAccount(user);
+        };
+
+        Allure.step("Verify the response code '" + expectedCode + "'", () ->
+                Assert.assertEquals(response.getResponseCode(), expectedCode)
+        );
+        Allure.step("Verify the response message '" + expectedMessage + "'", () ->
+                Assert.assertEquals(response.getMessage(), expectedMessage)
+        );
+    }
+
+    @Test
+    @Description("Verify that POST method is not allowed for PUT /updateAccount endpoint")
+    public void testUpdateAccountUnsupportedMethod() {
+        AccountResponse response = accountApiClient.updateAccountWithPost(AccountApiTestData.UPDATE_TEST_USER);
+
+        Allure.step("Verify the response code '405'", () ->
+                Assert.assertEquals(response.getResponseCode(), 405)
+        );
+
         Allure.step("Verify the response message", () ->
                 Assert.assertEquals(response.getMessage(), "Method \"POST\" not allowed.")
         );
