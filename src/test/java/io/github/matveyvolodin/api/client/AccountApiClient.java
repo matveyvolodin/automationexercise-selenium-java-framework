@@ -12,6 +12,7 @@ public class AccountApiClient {
 
     private static final String CREATE_ACCOUNT_ENDPOINT = "/api/createAccount";
     private static final String DELETE_ACCOUNT_ENDPOINT = "/api/deleteAccount";
+    public static final String UPDATE_ACCOUNT_ENDPOINT = "/api/updateAccount";
 
     @Step("Creating account for user: {user.email}")
     public AccountResponse createAccount(User user) {
@@ -40,10 +41,7 @@ public class AccountApiClient {
                 .extract()
                 .response();
 
-        AccountResponse result = new AccountResponse();
-        result.setResponseCode(response.jsonPath().getInt("responseCode"));
-        result.setMessage(response.jsonPath().getString("message"));
-        return result;
+        return toAccountResponse(response);
     }
 
     @Step("Creating account without email field for user: {user.name}")
@@ -73,10 +71,7 @@ public class AccountApiClient {
                 .extract()
                 .response();
 
-        AccountResponse result = new AccountResponse();
-        result.setResponseCode(response.jsonPath().getInt("responseCode"));
-        result.setMessage(response.jsonPath().getString("message"));
-        return result;
+        return toAccountResponse(response);
     }
 
     @Step("Creating account without password field for user: {user.email}")
@@ -106,10 +101,7 @@ public class AccountApiClient {
                 .extract()
                 .response();
 
-        AccountResponse result = new AccountResponse();
-        result.setResponseCode(response.jsonPath().getInt("responseCode"));
-        result.setMessage(response.jsonPath().getString("message"));
-        return result;
+        return toAccountResponse(response);
     }
 
     @Step("Creating account without name field for user: {user.email}")
@@ -139,10 +131,7 @@ public class AccountApiClient {
                 .extract()
                 .response();
 
-        AccountResponse result = new AccountResponse();
-        result.setResponseCode(response.jsonPath().getInt("responseCode"));
-        result.setMessage(response.jsonPath().getString("message"));
-        return result;
+        return toAccountResponse(response);
     }
 
     @Step("Attempting to create account with unsupported HTTP method PUT")
@@ -157,10 +146,7 @@ public class AccountApiClient {
                 .extract()
                 .response();
 
-        AccountResponse result = new AccountResponse();
-        result.setResponseCode(response.statusCode());
-        result.setMessage(response.jsonPath().getString("detail"));
-        return result;
+        return toAccountResponseFromDetail(response);
     }
 
     @Step("Deleting account for user: {user.email}")
@@ -175,10 +161,7 @@ public class AccountApiClient {
                 .extract()
                 .response();
 
-        AccountResponse result = new AccountResponse();
-        result.setResponseCode(response.jsonPath().getInt("responseCode"));
-        result.setMessage(response.jsonPath().getString("message"));
-        return result;
+        return toAccountResponse(response);
     }
 
     @Step("Deleting account without email field")
@@ -193,10 +176,7 @@ public class AccountApiClient {
                 .extract()
                 .response();
 
-        AccountResponse result = new AccountResponse();
-        result.setResponseCode(response.jsonPath().getInt("responseCode"));
-        result.setMessage(response.jsonPath().getString("message"));
-        return result;
+        return toAccountResponse(response);
     }
 
     @Step("Deleting account without password field for user: {user.email}")
@@ -211,29 +191,7 @@ public class AccountApiClient {
                 .extract()
                 .response();
 
-        AccountResponse result = new AccountResponse();
-        result.setResponseCode(response.jsonPath().getInt("responseCode"));
-        result.setMessage(response.jsonPath().getString("message"));
-        return result;
-    }
-
-    @Step("Deleting account with wrong password for user: {user.email}")
-    public AccountResponse deleteAccountWrongPassword(User user) {
-        Response response = given()
-                .spec(ApiConfig.getBaseSpec())
-                .formParam("email", user.getEmail())
-                // Intentionally using a wrong password to test validation
-                .formParam("password", "wrongPassword123!")
-                .when()
-                .delete(DELETE_ACCOUNT_ENDPOINT)
-                .then()
-                .extract()
-                .response();
-
-        AccountResponse result = new AccountResponse();
-        result.setResponseCode(response.jsonPath().getInt("responseCode"));
-        result.setMessage(response.jsonPath().getString("message"));
-        return result;
+        return toAccountResponse(response);
     }
 
     @Step("Attempting to delete account with unsupported HTTP method PUT")
@@ -248,6 +206,81 @@ public class AccountApiClient {
                 .extract()
                 .response();
 
+        return toAccountResponseFromDetail(response);
+    }
+
+    @Step("Updating account with correct credentials for user: {user.email}")
+    public AccountResponse updateAccount(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .formParam("email", user.getEmail())
+                .formParam("password", user.getPassword())
+                .formParam("name", user.getName())
+                .when()
+                .put(UPDATE_ACCOUNT_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        return toAccountResponse(response);
+    }
+
+    @Step("Updating account without email field")
+    public AccountResponse updateAccountWithoutEmail(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                // email formParam is intentionally omitted to test missing field validation
+                .formParam("password", user.getPassword())
+                .formParam("name", user.getName())
+                .when()
+                .put(UPDATE_ACCOUNT_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        return toAccountResponse(response);
+    }
+
+    @Step("Updating account without password field for user: {user.email}")
+    public AccountResponse updateAccountWithoutPassword(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .formParam("email", user.getEmail())
+                // password formParam is intentionally omitted to test missing field validation
+                .formParam("name", user.getName())
+                .when()
+                .put(UPDATE_ACCOUNT_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        return toAccountResponse(response);
+    }
+
+    @Step("Updating account with unsupported HTTP method POST for user: {user.email}")
+    public AccountResponse updateAccountWithPost(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .formParam("email", user.getEmail())
+                .formParam("password", user.getPassword())
+                .formParam("name", user.getName())
+                .when()
+                .post(UPDATE_ACCOUNT_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        return toAccountResponseFromDetail(response);
+    }
+
+    private AccountResponse toAccountResponse(Response response) {
+        AccountResponse result = new AccountResponse();
+        result.setResponseCode(response.jsonPath().getInt("responseCode"));
+        result.setMessage(response.jsonPath().getString("message"));
+        return result;
+    }
+
+    private AccountResponse toAccountResponseFromDetail(Response response) {
         AccountResponse result = new AccountResponse();
         result.setResponseCode(response.statusCode());
         result.setMessage(response.jsonPath().getString("detail"));
