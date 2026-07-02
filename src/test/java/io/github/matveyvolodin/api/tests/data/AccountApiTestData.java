@@ -52,4 +52,18 @@ public class AccountApiTestData {
                         "updateAccount", 200, "User updated!"},
         };
     }
+
+    @DataProvider(name = "verifyLoginData")
+    public static Object[][] verifyLoginData() {
+        return new Object[][]{
+                {"testVerifyLoginWithoutEmail", UPDATE_TEST_USER, "verifyLoginWithoutEmail", 400,
+                        "Bad request, email or password parameter is missing in POST request."},
+                {"testVerifyLoginWithoutPassword", UPDATE_TEST_USER, "verifyLoginWithoutPassword", 400,
+                        "Bad request, email or password parameter is missing in POST request."},
+                // API returns 404 instead of expected 401 for wrong credentials
+                {"testVerifyLoginWithWrongCredentials", UPDATE_TEST_USER.toBuilder().password("wrongPassword123!").
+                        build(), "verifyLogin", 404, "User not found!"},
+                {"testVerifyLogin", UPDATE_TEST_USER, "verifyLogin", 200, "User exists!"},
+        };
+    }
 }

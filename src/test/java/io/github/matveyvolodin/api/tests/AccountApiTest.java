@@ -48,6 +48,8 @@ public class AccountApiTest extends BaseApiTest{
         );
     }
 
+    // FIXME: API returns {"detail": "Method \"PUT\" not allowed."} instead of the standard
+    //        {"responseCode": 405, "message": "..."} format used by other endpoints (e.g. /verifyLogin).
     @Test
     @Description("Verify that PUT method is not allowed for POST /createAccount endpoint")
     public void testCreateAccountUnsupportedMethod() {
@@ -80,6 +82,8 @@ public class AccountApiTest extends BaseApiTest{
         );
     }
 
+    // FIXME: API returns {"detail": "Method \"POST\" not allowed."} instead of the standard
+    //        {"responseCode": 405, "message": "..."} format used by other endpoints (e.g. /verifyLogin).
     @Test
     @Description("Verify that POST method is not allowed for DELETE /deleteAccount endpoint")
     public void testDeleteAccountUnsupportedMethod() {
@@ -113,6 +117,8 @@ public class AccountApiTest extends BaseApiTest{
         );
     }
 
+    // FIXME: API returns {"detail": "Method \"POST\" not allowed."} instead of the standard
+    //        {"responseCode": 405, "message": "..."} format used by other endpoints (e.g. /verifyLogin).
     @Test
     @Description("Verify that POST method is not allowed for PUT /updateAccount endpoint")
     public void testUpdateAccountUnsupportedMethod() {
@@ -124,6 +130,41 @@ public class AccountApiTest extends BaseApiTest{
 
         Allure.step("Verify the response message", () ->
                 Assert.assertEquals(response.getMessage(), "Method \"POST\" not allowed.")
+        );
+    }
+
+    @Test(dataProvider = "verifyLoginData", dataProviderClass = AccountApiTestData.class)
+    @Description("Verify POST /verifyLogin endpoint responses for different input scenarios")
+    public void testVerifyLogin(String scenarioName, User user, String method, int expectedCode,
+                                String expectedMessage) {
+        Allure.getLifecycle().updateTestCase(testResult -> testResult.setName(scenarioName));
+
+        AccountResponse response = switch (method) {
+            case "verifyLoginWithoutEmail" -> accountApiClient.verifyLoginWithoutEmail(user);
+            case "verifyLoginWithoutPassword" -> accountApiClient.verifyLoginWithoutPassword(user);
+            default -> accountApiClient.verifyLogin(user);
+        };
+
+        Allure.step("Verify the response code '" + expectedCode + "'", () ->
+                Assert.assertEquals(response.getResponseCode(), expectedCode)
+        );
+
+        Allure.step("Verify the response message '" + expectedMessage + "'", () ->
+                Assert.assertEquals(response.getMessage(), expectedMessage)
+        );
+    }
+
+    @Test
+    @Description("Verify that PUT method is not allowed for POST /verifyLogin endpoint")
+    public void testVerifyLoginUnsupportedMethod() {
+        AccountResponse response = accountApiClient.verifyLoginWithPut(AccountApiTestData.UPDATE_TEST_USER);
+
+        Allure.step("Verify the response code '405'", () ->
+                Assert.assertEquals(response.getResponseCode(), 405)
+        );
+
+        Allure.step("Verify the response message", () ->
+                Assert.assertEquals(response.getMessage(), "This request method is not supported.")
         );
     }
 }

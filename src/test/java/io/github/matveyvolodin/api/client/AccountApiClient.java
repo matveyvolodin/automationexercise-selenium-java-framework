@@ -12,7 +12,8 @@ public class AccountApiClient {
 
     private static final String CREATE_ACCOUNT_ENDPOINT = "/api/createAccount";
     private static final String DELETE_ACCOUNT_ENDPOINT = "/api/deleteAccount";
-    public static final String UPDATE_ACCOUNT_ENDPOINT = "/api/updateAccount";
+    private static final String UPDATE_ACCOUNT_ENDPOINT = "/api/updateAccount";
+    private static final String VERIFY_LOGIN_ENDPOINT = "/api/verifyLogin";
 
     @Step("Creating account for user: {user.email}")
     public AccountResponse createAccount(User user) {
@@ -273,6 +274,66 @@ public class AccountApiClient {
         return toAccountResponseFromDetail(response);
     }
 
+    @Step("Verifying login for user: {user.email}")
+    public AccountResponse verifyLogin(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .formParam("email", user.getEmail())
+                .formParam("password", user.getPassword())
+                .when()
+                .post(VERIFY_LOGIN_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        return toAccountResponse(response);
+    }
+
+    @Step("Verifying login without email field")
+    public AccountResponse verifyLoginWithoutEmail(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                // email formParam is intentionally omitted to test missing field validation
+                .formParam("password", user.getPassword())
+                .when()
+                .post(VERIFY_LOGIN_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        return toAccountResponse(response);
+    }
+
+    @Step("Verifying login without password field for user: {user.email}")
+    public AccountResponse verifyLoginWithoutPassword(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .formParam("email", user.getEmail())
+                // password formParam is intentionally omitted to test missing field validation
+                .when()
+                .post(VERIFY_LOGIN_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        return toAccountResponse(response);
+    }
+
+    @Step("Verifying login with unsupported HTTP method PUT for user: {user.email}")
+    public AccountResponse verifyLoginWithPut(User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .formParam("email", user.getEmail())
+                .formParam("password", user.getPassword())
+                .when()
+                .put(VERIFY_LOGIN_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        return toAccountResponse(response);
+    }
+
     private AccountResponse toAccountResponse(Response response) {
         AccountResponse result = new AccountResponse();
         result.setResponseCode(response.jsonPath().getInt("responseCode"));
@@ -280,6 +341,8 @@ public class AccountApiClient {
         return result;
     }
 
+    // Some endpoints return {"detail": "..."} instead of the standard {"responseCode": N, "message": "..."}
+    // format when receiving unsupported HTTP methods. This helper handles that inconsistent response format.
     private AccountResponse toAccountResponseFromDetail(Response response) {
         AccountResponse result = new AccountResponse();
         result.setResponseCode(response.statusCode());
