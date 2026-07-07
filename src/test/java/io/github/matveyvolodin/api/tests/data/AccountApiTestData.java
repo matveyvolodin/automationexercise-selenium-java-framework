@@ -66,4 +66,15 @@ public class AccountApiTestData {
                 {"testVerifyLogin", UPDATE_TEST_USER, "verifyLogin", 200, "User exists!"},
         };
     }
+
+    @DataProvider(name="getUserData")
+    public static Object[][] getUserData() {
+        return new Object[][]{
+                {"testGetUser", UPDATE_TEST_USER, "getUser", 200, null},
+                {"testGetUserWithoutEmail", UPDATE_TEST_USER, "getUserWithoutEmail", 400,
+                        "Bad request, email parameter is missing in GET request."},
+                {"testGetUserWithWrongEmail", UPDATE_TEST_USER.toBuilder().email("wrongemail@tt.com").
+                        build(), "getUser", 404, "Account not found with this email, try another email!"},
+        };
+    }
 }

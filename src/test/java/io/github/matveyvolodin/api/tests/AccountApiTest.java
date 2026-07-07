@@ -167,4 +167,39 @@ public class AccountApiTest extends BaseApiTest{
                 Assert.assertEquals(response.getMessage(), "This request method is not supported.")
         );
     }
+
+    @Test(dataProvider = "getUserData", dataProviderClass = AccountApiTestData.class)
+    @Description("Verify GET /getUserDetailByEmail endpoint responses for different input scenarios")
+    public void testGetUser(String scenarioName, User user, String method, int expectedCode,
+                            String expectedMessage) {
+        Allure.getLifecycle().updateTestCase(testResult -> testResult.setName(scenarioName));
+
+        AccountResponse response = switch (method) {
+            case "getUserWithoutEmail" -> accountApiClient.getUserWithoutEmail();
+            default -> accountApiClient.getUser(user);
+        };
+
+        Allure.step("Verify the response code '" + expectedCode + "'", () ->
+                Assert.assertEquals(response.getResponseCode(), expectedCode)
+        );
+
+        if (expectedMessage != null) {
+            Allure.step("Verify the response message '" + expectedMessage + "'", () ->
+                    Assert.assertEquals(response.getMessage(), expectedMessage)
+            );
+        }
+    }
+
+    @Test
+    @Description("Verify that POST method is not allowed for GET /getUserDetailByEmail endpoint")
+    public void testGetUserUnsupportedMethod() {
+        AccountResponse response = accountApiClient.getUserWithPost(AccountApiTestData.UPDATE_TEST_USER);
+
+        Allure.step("Verify the response code '405'", () ->
+                Assert.assertEquals(response.getResponseCode(), 405)
+        );
+        Allure.step("Verify the response message", () ->
+                Assert.assertEquals(response.getMessage(), "This request method is not supported.")
+        );
+    }
 }

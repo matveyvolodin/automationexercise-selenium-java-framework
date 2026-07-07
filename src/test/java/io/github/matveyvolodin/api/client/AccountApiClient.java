@@ -14,6 +14,7 @@ public class AccountApiClient {
     private static final String DELETE_ACCOUNT_ENDPOINT = "/api/deleteAccount";
     private static final String UPDATE_ACCOUNT_ENDPOINT = "/api/updateAccount";
     private static final String VERIFY_LOGIN_ENDPOINT = "/api/verifyLogin";
+    private static final String GET_ACCOUNT_DETAILS_ENDPOINT = "api/getUserDetailByEmail";
 
     @Step("Creating account for user: {user.email}")
     public AccountResponse createAccount(User user) {
@@ -195,7 +196,7 @@ public class AccountApiClient {
         return toAccountResponse(response);
     }
 
-    @Step("Attempting to delete account with unsupported HTTP method PUT")
+    @Step("Attempting to delete account with unsupported HTTP method POST")
     public AccountResponse deleteAccountWithPost(User user) {
         Response response = given()
                 .spec(ApiConfig.getBaseSpec())
@@ -327,6 +328,47 @@ public class AccountApiClient {
                 .formParam("password", user.getPassword())
                 .when()
                 .put(VERIFY_LOGIN_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        return toAccountResponse(response);
+    }
+
+    @Step("Getting user details for user: {user.email}")
+    public AccountResponse getUser (User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .queryParam("email", user.getEmail())
+                .when()
+                .get(GET_ACCOUNT_DETAILS_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        return toAccountResponse(response);
+    }
+
+    @Step("Getting user details without email field")
+    public AccountResponse getUserWithoutEmail () {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .when()
+                .get(GET_ACCOUNT_DETAILS_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+
+        return toAccountResponse(response);
+    }
+
+    @Step("Getting user details with unsupported HTTP method POST for user: {user.email}")
+    public AccountResponse getUserWithPost (User user) {
+        Response response = given()
+                .spec(ApiConfig.getBaseSpec())
+                .queryParam("email", user.getEmail())
+                .when()
+                .post(GET_ACCOUNT_DETAILS_ENDPOINT)
                 .then()
                 .extract()
                 .response();
