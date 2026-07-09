@@ -1,27 +1,50 @@
 # Automation Exercise – Selenium + Java Test Framework
 
-Automated UI test framework for [automationexercise.com](https://automationexercise.com), built with Selenium WebDriver and Java. The project follows standard test-automation practices (TestNG for execution and assertions, Allure for reporting, REST Assured included for API-level checks) and is set up as a Maven project so it can be easily cloned and run locally.
+Automated UI and API test framework for [automationexercise.com](https://automationexercise.com), built with Selenium WebDriver and Java. The project follows standard test-automation practices (TestNG for execution and assertions, Allure for reporting, REST Assured included for API-level checks) and is set up as a Maven project so it can be easily cloned and run locally.
+The framework applies the Page object model with method chaining for better readability and to facilitate test maintenance, and uses builder and factory patterns for test data management in parameterized tests.
+## Documentation
 
-## Tech Stack
+Both UI and API test scenarios covered by this framework are tracked [in a Google Sheets checklist here](https://docs.google.com/spreadsheets/d/1DntUIwpm_i0xmL2AZIFOm5m6XnnJZGUDJBm95-kOiv8/edit?gid=817815568#gid=817815568). I did not set a goal to automate all the possible scenarios in this framework, moreover a lot of validations on this website are not implemented so there was no necessity to test them. I left corresponding notes about these cases in the checklist.
 
-- **Java 17**
-- **Maven** – build and dependency management
-- **Selenium WebDriver 4.44** – browser automation (uses Selenium's built-in driver management, so no separate WebDriverManager setup is required)
+## Project Structure
+
+```
+src/
+└── test/
+    └── java/
+        └── io/github/matveyvolodin/
+            ├── api/                     # API-level test code
+            │   ├── client/              # REST Assured client for API interactions
+            │   ├── config/              # base request/response spec setup (getBaseSpec)
+            │   ├── model/               # API request/response models
+            │   └── tests/               # API-level tests using REST Assured
+            |       └── data             # Data providers for API tests
+            ├── model/                   # User class and UserFactory for test data management
+            ├── pages/                   # Page Object Model classes representing app pages
+            │   └── components/          # reusable page components (e.g., header, footer)
+            └── tests/                   # UI/functional test classes organized by page
+                └── components/          # tests for components present on every page (e.g., header, footer)
+```
+
+
+## CI and Allure reports
+
+This repository includes a GitHub Actions workflow (`.github/workflows`) that runs the test suite automatically on pull requests.
+The workflow is configured to generate and publish the Allure report as an artifact after each run, so you can view the latest test results [directly from here](https://matveyvolodin.github.io/automationexercise-selenium-java-framework/).
+
+## Tech Stack & Prerequisites
+
+- **Java 17** or higher
+- **Git**
+- **IntelliJ IDEA** (or any other IDE that supports Maven and TestNG)
+- **Google Chrome**
+- **Maven** – build and dependency management (bundled with IntelliJ IDEA)
+- **Selenium WebDriver 4.44** – browser automation with built-in driver management
 - **TestNG 7.12** – test runner, assertions, suite/parallel execution
 - **Allure 2.34** – test reporting
 - **REST Assured 5.4** – API testing support
 - **Lombok** – reduces boilerplate in helper/model classes
 - **AspectJ Weaver** – required by Allure for step/attachment annotations
-
-## Prerequisites
-
-Before you start, make sure you have the following installed:
-
-- **JDK 17** or higher
-- **Git**
-- **IntelliJ IDEA** (or Other IDE that supports Maven and TestNG)
-- **Google Chrome** (or another browser supported by your tests; update the driver setup in the framework if you switch browsers)
-- *(Optional)* **Allure command-line tool**, if you want to generate/view reports outside of Maven — see [Allure installation docs](https://allurereport.org/docs/install/)
 
 ## Getting Started in IntelliJ IDEA
 
@@ -59,6 +82,8 @@ If you don't already have it, install the **Lombok plugin**: **Settings/Preferen
 
 You can run tests either from IntelliJ directly or via Maven from the terminal.
 
+> Test stability may be affected by the bot-protection on automationexercise.com, which can temporarily block automated requests from CI runner IPs.
+
 ### From IntelliJ
 
 - Navigate to a test class (or your TestNG suite XML file, if the project includes one) under `src/test/java`.
@@ -80,7 +105,7 @@ mvn clean test -Dtest=SignupPageTest
 
 Maven is configured to attach the AspectJ weaver as a Java agent automatically (via the `maven-surefire-plugin` config in `pom.xml`), so Allure step/annotation reporting works out of the box — no extra setup needed.
 
-## Viewing the Allure Report
+## Viewing Allure Report
 
 After running the tests, results are written to `target/allure-results`. To generate and open the HTML report:
 
@@ -96,31 +121,3 @@ mvn allure:report
 
 The output will be available under `target/site/allure-maven-plugin/index.html`.
 
-## Project Structure
-
-```
-src/
-└── test/
-    └── java/
-        └── io/github/matveyvolodin/
-            ├── api/                     # API-level test code
-            │   ├── client/              # REST Assured client for API interactions
-            │   ├── config/              # base request/response spec setup (getBaseSpec)
-            │   ├── model/               # API request/response models
-            │   └── tests/               # API-level tests using REST Assured
-            ├── model/                   # User class and UserFactory for test data management
-            ├── pages/                   # Page Object Model classes representing app pages
-            │   └── components/          # reusable page components (e.g., header, footer)
-            └── tests/                   # UI/functional test classes organized by page
-                └── components/          # tests for components present on every page (e.g., header, footer)
-```
-
-## Test Checklist
-
-The test cases covered by this framework are tracked in a checklist here: [Test Checklist (Google Sheets)](https://docs.google.com/spreadsheets/d/1DntUIwpm_i0xmL2AZIFOm5m6XnnJZGUDJBm95-kOiv8/edit?gid=646306595#gid=646306595).
-
-## Continuous Integration
-
-This repository includes a GitHub Actions workflow (`.github/workflows`) that runs the test suite automatically on pull requests.
-
-The workflow is configured to generate and publish the Allure report as an artifact after each run, so you can view the latest test results directly from [here in 'pages build and deployment'](https://github.com/matveyvolodin/automationexercise-selenium-java-framework/actions/workflows/pages/pages-build-deployment).
