@@ -1,5 +1,8 @@
 package io.github.matveyvolodin.tests;
 
+import io.github.matveyvolodin.model.User;
+import io.github.matveyvolodin.pages.MainPage;
+import io.github.matveyvolodin.pages.components.HeaderMenuComponent;
 import io.qameta.allure.Allure;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -48,5 +51,13 @@ public abstract class BaseTest {
         if (driver != null) {
             driver.quit();
         }
+    }
+
+    protected MainPage loginAs(User user) {
+        return new HeaderMenuComponent(driver)
+                .clickSignupLoginTab()
+                .fillEmailAddressInLoginForm(user.getEmail())
+                .fillPasswordInLoginForm(user.getPassword())
+                .clickLoginButtonExpectedSuccess();
     }
 }
