@@ -1,0 +1,21 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="Automation Exercise">
+
+    <test name="UI Tests">
+        <classes>
+            <class name="io.github.matveyvolodin.tests.components.HeaderMenuComponentTest"/>
+            <class name="io.github.matveyvolodin.tests.components.FooterComponentTest"/>
+            <class name="io.github.matveyvolodin.tests.ProductsPageTest"/>
+            <class name="io.github.matveyvolodin.tests.SignupLoginPageTest"/>
+            <class name="io.github.matveyvolodin.tests.SignupPageTest"/>
+        </classes>
+    </test>
+
+    <test name="API Tests">
+        <classes>
+            <class name="io.github.matveyvolodin.api.tests.AccountApiTest"/>
+        </classes>
+    </test>
+
+</suite>

@@ -23,7 +23,7 @@ public class SignupLoginPageTest extends BaseTest {
     private static final String EMAIL_ALREADY_EXIST = "Email Address already exist!";
 
     @BeforeClass
-    public void createExistingUser() {
+    public void createUser() {
         existingUser = UserFactory.getRandomUser();
         accountApiClient.createAccount(existingUser);
         secondUser = UserFactory.getSecondUser();
@@ -31,7 +31,7 @@ public class SignupLoginPageTest extends BaseTest {
     }
 
     @AfterClass
-    public void deleteExistingUser() {
+    public void deleteUser() {
         accountApiClient.deleteAccount(existingUser);
         accountApiClient.deleteAccount(secondUser);
     }

@@ -1,5 +1,6 @@
 package io.github.matveyvolodin.pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -16,6 +17,7 @@ public class AccountCreatedPage extends BasePage{
         return getText(successMessage);
     }
 
+    @Step("Click the Continue button on the Account Created page")
     public MainPage clickContinueButton() {
         click(continueButton);
         return new MainPage(driver);
