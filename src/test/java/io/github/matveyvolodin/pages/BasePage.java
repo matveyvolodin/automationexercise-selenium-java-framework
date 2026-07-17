@@ -68,6 +68,10 @@ public abstract class BasePage {
         return driver.findElement(locator).isDisplayed();
     }
 
+    protected boolean isElementPresent(By locator) {
+        return !driver.findElements(locator).isEmpty();
+    }
+
     public HeaderMenuComponent header() {
         return new HeaderMenuComponent(driver);
     }

@@ -10,6 +10,9 @@ public class ProductsPage  extends BasePage{
         super(driver);
     }
 
+    private final By searchInput = By.id("search_product");
+    private final By searchButton = By.id("submit_search");
+
     @Step("Click 'Add to Cart' button for product: {productName}")
     public AddToCartModalComponent clickAddToCartButtonForProduct(String productName) {
         driver.findElement(By.xpath("//div[@class='productinfo text-center']" +
@@ -28,5 +31,15 @@ public class ProductsPage  extends BasePage{
         return new ProductDetailsPage(driver);
     }
 
+    @Step("Search for product: {productName}")
+    public ProductsPage searchForProduct(String productName) {
+        fill(searchInput, productName);
+        click(searchButton);
+        return this;
+    }
 
+    public boolean isProductDisplayed(String productName) {
+        return isElementPresent(By.xpath("//div[@class='productinfo text-center']/p[text()='"
+                + productName + "']"));
+    }
 }
