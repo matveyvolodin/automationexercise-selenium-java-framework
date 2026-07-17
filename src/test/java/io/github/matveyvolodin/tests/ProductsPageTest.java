@@ -36,9 +36,9 @@ public class ProductsPageTest extends BaseTest {
     @DataProvider(name = "searchProductData")
     public static Object[][] searchProductData() {
         return new Object[][]{
-                {"Search with fully matching product name", productName, true},
-                {"Search with partly matching product name", "Dress", true},
-                {"Search with non-matching product name", "NonExistingProduct", false}
+                {"testSearchProductFullyMatching", productName, true},
+                {"testSearchProductPartlyMatching", "Dress", true},
+                {"testSearchProductNonMatching", "NonExistingProduct", false}
         };
     }
 
