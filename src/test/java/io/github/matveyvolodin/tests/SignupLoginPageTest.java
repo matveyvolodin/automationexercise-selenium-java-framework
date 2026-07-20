@@ -39,11 +39,11 @@ public class SignupLoginPageTest extends BaseTest {
     @DataProvider(name = "invalidCredentials")
     public Object[][] invalidCredentials() {
         return new Object[][]{
-                {"Login with registered email and wrong password", existingUser.getEmail(), "WrongPassword123!",
+                {"testLoginWithWrongPassvord", existingUser.getEmail(), "WrongPassword123!",
                         "Your email or password is incorrect!"},
-                {"Login with non-registered email and valid password", "nonexistingemail@gmail.com",
+                {"testLoginWithWrongEmail", "nonexistingemail@gmail.com",
                         existingUser.getPassword(), "Your email or password is incorrect!"},
-                {"Login with email and password from different registered accounts", existingUser.getEmail(),
+                {"testLoginWithCredsOfDifferentAccounts", existingUser.getEmail(),
                         secondUser.getPassword(), "Your email or password is incorrect!"}
         };
     }
@@ -86,14 +86,16 @@ public class SignupLoginPageTest extends BaseTest {
 
     @Test(dataProvider = "invalidCredentials")
     @Description("Verify that user cannot login with invalid credentials")
-    public void testLoginWithInvalidCredentials(String description, String email, String password, String expectedMessage) {
+    public void testLoginWithInvalidCredentials(String scenarioName, String email, String password, String expectedMessage) {
+        Allure.getLifecycle().updateTestCase(testResult -> testResult.setName(scenarioName));
+
         SignupLoginPage signupLoginPage = new HeaderMenuComponent(driver)
                 .clickSignupLoginTab()
                 .fillEmailAddressInLoginForm(email)
                 .fillPasswordInLoginForm(password)
                 .clickLoginButtonExpectedFailure();
 
-        Allure.step("Verify that user cannot login with invalid credentials: " + description, () ->
+        Allure.step("Verify that user cannot login with invalid credentials: " + scenarioName, () ->
                 Assert.assertEquals(signupLoginPage.getErrorMessage(), expectedMessage));
     }
 
