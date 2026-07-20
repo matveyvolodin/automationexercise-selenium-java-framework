@@ -10,7 +10,6 @@ public class ProductDetailsPage extends BasePage {
     }
 
     public String getProductName() {
-        return driver.findElement(By.cssSelector(".product-information h2")).getText();
+        return getText(By.cssSelector(".product-information h2"));
     }
-
 }

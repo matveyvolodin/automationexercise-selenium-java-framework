@@ -11,6 +11,7 @@ import io.qameta.allure.Description;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class ProductsPageTest extends BaseTest {
@@ -30,6 +31,15 @@ public class ProductsPageTest extends BaseTest {
     @AfterClass
     public void deleteUser() {
         accountApiClient.deleteAccount(user);
+    }
+
+    @DataProvider(name = "searchProductData")
+    public static Object[][] searchProductData() {
+        return new Object[][]{
+                {"testSearchProductFullyMatching", productName, true},
+                {"testSearchProductPartlyMatching", "Dress", true},
+                {"testSearchProductNonMatching", "NonExistingProduct", false}
+        };
     }
 
     @Test
@@ -63,5 +73,19 @@ public class ProductsPageTest extends BaseTest {
 
         Allure.step("Compare product names to verify that user is redirected to the product details page", () ->
                 Assert.assertEquals(productDetailsName, productName));
+    }
+
+    @Test(dataProvider="searchProductData")
+    @Description("Verify search product results for different product name inputs")
+    public void testSearchProduct(String testName, String searchQuery, boolean expectedResult) {
+        Allure.getLifecycle().updateTestCase(testResult -> testResult.setName(testName));
+
+        boolean isProductFound = new HeaderMenuComponent(driver)
+                .clickProductsTab()
+                .searchForProduct(searchQuery)
+                .isProductDisplayed(productName);
+
+        Allure.step("Verify that product is found in search results", () ->
+                Assert.assertEquals(isProductFound, expectedResult));
     }
 }

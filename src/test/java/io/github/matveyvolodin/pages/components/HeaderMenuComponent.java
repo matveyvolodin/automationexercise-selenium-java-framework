@@ -98,7 +98,7 @@ public class HeaderMenuComponent extends BasePage {
     }
 
     public String getLoginMessage() {
-        return driver.findElement(loginMessage).getText();
+        return getText(loginMessage);
     }
 
 

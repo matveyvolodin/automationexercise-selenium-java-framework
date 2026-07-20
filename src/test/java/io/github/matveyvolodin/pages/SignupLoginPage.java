@@ -85,6 +85,6 @@ public class SignupLoginPage  extends BasePage {
 
     @Step("Get login error message")
     public String getErrorMessage() {
-        return driver.findElement(errorMessage).getText();
+        return getText(errorMessage);
     }
 }
